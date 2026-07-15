@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: gms-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: gms_user
+      POSTGRES_PASSWORD: gms_secure_password123
+      POSTGRES_DB: gms_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gms-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DATABASE_URL=postgresql://gms_user:gms_secure_password123@postgres:5432/gms_db?schema=public
+      - JWT_SECRET=gms_jwt_secret_key_2026_super_secure_98765
+      - JWT_REFRESH_SECRET=gms_jwt_refresh_secret_key_2026_super_secure_12345
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gms-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
