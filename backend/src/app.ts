@@ -17,8 +17,12 @@ import dietRouter from './routes/diet.routes';
 import leadRouter from './routes/lead.routes';
 
 import { errorHandler } from './middleware/errorHandler';
+import { initReminderCron } from './services/cron.service';
 
 const app = express();
+
+// Bootstrap notification templates in database asynchronously
+initReminderCron().catch(err => console.error('Failed to bootstrap reminder templates:', err));
 
 // Security HTTP headers
 app.use(helmet());

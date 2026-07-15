@@ -4,7 +4,7 @@
   "description": "Gym Management System Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node src/server.ts",
     "prisma:generate": "prisma generate",
